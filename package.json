@@ -4,11 +4,28 @@
   "description": "This authentication system is a secure web application built using Node.js, Express, SQLite, and EJS. It provides user registration and login functionality with a focus on robust security features. Users can create accounts with unique credentials, and the login process incorporates secure mechanisms such as password hashing, account lockout after multiple failed attempts, and two-step authentication (2FA) for added protection. The system includes session management to keep users authenticated and restricts access to a protected dashboard. Designed for both usability and security, the application aims to prevent unauthorized access while offering a seamless user experience.",
   "main": "app.js",
   "scripts": {
-    "test": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "author": "Theophilus Thobejane",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2"
+    "bcryptjs": "^2.4.3",
+    "connect-sqlite3": "^0.9.15",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "express-sqlite3": "^0.0.5",
+    "node_auth_system": "file:",
+    "nodemon": "^3.1.9",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "path": "^0.12.7",
+    "qrcode": "^1.5.4",
+    "rate-limiter-flexible": "^5.0.5",
+    "speakeasy": "^2.0.0",
+    "sqlite3": "^5.1.7"
   }
 }
