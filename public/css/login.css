@@ -39,6 +39,7 @@ body {
 .flex-column > label {
     color: #151717;
     font-weight: 100;
+    font-size: 0.8rem;
 }
   
 .inputForm {
@@ -50,6 +51,20 @@ body {
     align-items: center;
     padding-left: 10px;
     transition: 0.2s ease-in-out;
+}
+
+.inputForm button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: transparent;
+    border: none;
+    margin: 0 0.5em;
+}
+
+.inputForm button i {
+    font-size: large;
 }
 
 .inputForm svg {
@@ -113,6 +128,15 @@ body {
     color: black;
     font-size: 14px;
     margin: 5px 0;
+    font-size: small;
+}
+
+.apple, .google {
+    display: flex;
+    flex: 1;
+    text-decoration: none;
+    color: #151717;
+    font-size: small;
 }
   
 .btn {

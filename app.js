@@ -1,64 +1,54 @@
 const express = require('express');
-const app = express();
-const PORT = 3000;
+const passport = require('./config/passport-config'); 
 const session = require('express-session');
-const SQLiteStore = require('connect-sqlite3')(session);
+const authRoutes = require('./routes/auth'); // Import the authentication routes
+const dotenv = require('dotenv');
 const path = require('path');
-require('dotenv').config();
 const sqlite3 = require('sqlite3');
-const db = new sqlite3.Database('./database/database.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
+const fs = require('fs');
+
+// Initialize dotenv to use environment variables
+dotenv.config();
+const app = express();
+
+// Set up view engine (EJS)
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware to parse the request body
+app.use(express.urlencoded({ extended: true }));
+
+// Initialize session middleware
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || 'default_secret', // Fallback for missing environment variable
+        resave: false,
+        saveUninitialized: true,
+    })
+);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Routes
+app.use('/auth', authRoutes);
+
+// Serve the dashboard after successful login
+app.get('/', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.render('index');
     } else {
-        console.log('Connected to the SQLite database.');
+        res.redirect('/auth/sign-in'); // Corrected path to match your routes
     }
 });
 
-db.serialize(() => {
-    db.run(`
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL UNIQUE,
-            email TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            failed_attempts INTEGER DEFAULT 0,
-            is_locked INTEGER DEFAULT 0,
-            otp_secret TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
-
-    // Create the password reset tokens table
-    db.run(`
-        CREATE TABLE IF NOT EXISTS password_reset_tokens (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL,
-            token TEXT NOT NULL,
-            expires_at DATETIME NOT NULL,
-            used INTEGER DEFAULT 0,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
-
-    // Create the 2FA tokens table (optional)
-    db.run(`
-        CREATE TABLE IF NOT EXISTS two_factor_tokens (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            otp_token TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    `);
+app.use((req, res) => {
+    res.status(404).render('404', { message: 'Page not found' }); // Ensure you have a 404.ejs file in your views
 });
 
-app.use(express.urlencoded({ extended: true })); // Parse form data
-app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
-app.set('view engine', 'ejs'); // Set EJS as the view engine
-
-app.get('/', (req, res) => {
-    res.render('Auth/login');
-})
+// Start the server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server started running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
