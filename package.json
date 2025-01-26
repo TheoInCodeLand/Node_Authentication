@@ -1,0 +1,14 @@
+{
+  "name": "node_auth_system",
+  "version": "1.0.0",
+  "description": "This authentication system is a secure web application built using Node.js, Express, SQLite, and EJS. It provides user registration and login functionality with a focus on robust security features. Users can create accounts with unique credentials, and the login process incorporates secure mechanisms such as password hashing, account lockout after multiple failed attempts, and two-step authentication (2FA) for added protection. The system includes session management to keep users authenticated and restricts access to a protected dashboard. Designed for both usability and security, the application aims to prevent unauthorized access while offering a seamless user experience.",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "author": "Theophilus Thobejane",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
