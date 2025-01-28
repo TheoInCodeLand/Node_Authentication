@@ -6,7 +6,7 @@ body {
     align-items: center;
     
     height: 100vh;
-    background: #d0d0d026;
+    background: #d0d0d00b;
 }
 
 .container {
@@ -29,7 +29,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1em;
-    background-color: #ffffff;
     padding: 30px;
     width: 450px;
     border-radius: 20px;

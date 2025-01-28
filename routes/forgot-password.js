@@ -4,7 +4,7 @@ const { check, validationResult } = require('express-validator'); // For validat
 
 // Forgot password page
 router.get('/', (req, res) => {
-    res.render('Auth/forgot-password');
+    res.render('Auth/forgot-password', { error: null });
 });
 
 // Handle forgot password form submission
