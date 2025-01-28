@@ -6,16 +6,24 @@ body {
     align-items: center;
     
     height: 100vh;
-    background: #f8f8f840;
+    background: #d0d0d026;
 }
 
 .container {
     padding: 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     border-radius: 20px;
     background: #ffffff;
     box-shadow:  20px 20px 60px #ededed,
                 -20px -20px 60px #ffffff;
 }
+
+.__logo img{
+    width: 150px;
+}
+
 
 .form {
     display: flex;
@@ -79,6 +87,11 @@ body {
     height: 100%;
     padding: 0em 1em;
 }
+
+.Names__div {
+    display: flex;
+    gap: 0.5em;
+}
   
 .input:focus {
     outline: none;
@@ -103,7 +116,8 @@ body {
 }
   
 .span {
-    font-size: 14px;
+    text-decoration: none;
+    font-size: small;
     margin-left: 5px;
     color: #2d79f3;
     font-weight: 500;
@@ -116,11 +130,14 @@ body {
     border: none;
     color: white;
     font-size: 15px;
-    font-weight: 500;
     border-radius: 10px;
     height: 50px;
     width: 100%;
     cursor: pointer;
+}
+
+.button-submit:hover {
+    background-color: black;
 }
   
 .p {

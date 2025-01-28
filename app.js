@@ -1,7 +1,6 @@
 const express = require('express');
 const passport = require('./config/passport-config'); 
 const session = require('express-session');
-const authRoutes = require('./routes/auth'); // Import the authentication routes
 const dotenv = require('dotenv');
 const path = require('path');
 const sqlite3 = require('sqlite3');
@@ -32,7 +31,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
+const authRoutes = require('./routes/auth'); // Import the authentication ro
 app.use('/auth', authRoutes);
+
+const forgotPasswordRoutes = require('./routes/forgot-password'); // Import the authentication ro
+app.use('/forgot-password', forgotPasswordRoutes);
 
 // Serve the dashboard after successful login
 app.get('/', (req, res) => {
