@@ -7,10 +7,8 @@ const db = new sqlite3.Database('./database/Auth.db');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 
-// Google Login Route
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Google Callback Route
 router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/auth/sign-in' }),
     (req, res) => {
@@ -18,18 +16,15 @@ router.get('/google/callback',
     }
 );
 
-// Render Login Page
 router.get('/sign-in', (req, res) => {
     res.render('Auth/login', { error: null });
 });
 
-// Render Register Page
 router.get('/sign-up', (req, res) => {
     res.render('Auth/register');
 });
 
-// In-memory object to track failed login attempts
-const loginAttempts = new Map(); // Use email as key
+const loginAttempts = new Map();
 
 const MAX_ATTEMPTS = 3;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
@@ -79,8 +74,6 @@ router.post('/login', (req, res) => {
                 handleFailedAttempt(email, res);
                 return;
             }
-
-            // Successful login, reset attempts
             loginAttempts.delete(email);
 
             req.session.user = { id: user.id, username: user.username, email: user.email };
@@ -91,7 +84,6 @@ router.post('/login', (req, res) => {
     );
 });
 
-// Helper function to handle failed login attempts
 function handleFailedAttempt(email, res) {
     if (!loginAttempts.has(email)) {
         loginAttempts.set(email, { attempts: 1, lockedUntil: null });
@@ -168,6 +160,5 @@ router.post(
     });
   }
 );
-
 
 module.exports = router;
