@@ -112,8 +112,13 @@
                     <i class="uil uil-eye" id="open_eye"></i>
                 </button>
             </div>
+
+            <div class="terms__conditions__div">
+                <input type="checkbox" id="terms" name="terms" required>
+                <p>I accept the <a href="/terms-and-conditions" target="_blank">terms and conditions.</a></p>
+            </div>
             
-            <button class="button-submit">Sign Up</button>
+            <button class="button-submit" id="signupBtn">Sign Up</button>
             <p class="p">Already have an account? <a href="/auth/sign-in" class="span">Sign in</a></p>
     
         </form>
@@ -133,6 +138,18 @@
           icon.classList.toggle('uil-eye-slash');
         });
   
+    </script>
+    <script>
+        const termsCheckbox = document.getElementById('terms');
+        const signupButton = document.getElementById('signupBtn');
+
+        function toggleButtonState() {
+            signupButton.disabled = !termsCheckbox.checked;
+        }
+
+        termsCheckbox.addEventListener('change', toggleButtonState);
+
+        toggleButtonState();
     </script>
 </body>
 </html>

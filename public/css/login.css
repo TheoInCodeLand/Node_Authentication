@@ -113,6 +113,17 @@ body {
     color: black;
     font-weight: 400;
 }
+
+.terms__conditions__div {
+    display: flex;
+    gap: 1rem;
+    font-size: small;
+    margin-top: 0.5rem;
+}
+
+.terms__conditions__div a {
+    text-decoration: none;
+}
   
 .span {
     text-decoration: none;
