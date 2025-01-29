@@ -31,13 +31,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-const authRoutes = require('./routes/auth'); // Import the authentication ro
+const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
-const forgotPasswordRoutes = require('./routes/forgot-password'); // Import the authentication ro
+const forgotPasswordRoutes = require('./routes/forgot-password');
 app.use('/forgot-password', forgotPasswordRoutes);
-
-// Serve the dashboard after successful login
 app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         res.render('index');
