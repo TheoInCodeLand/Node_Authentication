@@ -9,12 +9,10 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Serialize user to store user ID in session
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 
-// Deserialize user to retrieve user details from database
 passport.deserializeUser((id, done) => {
     db.get('SELECT * FROM users WHERE id = ?', [id], (err, row) => {
         if (err) {
@@ -24,7 +22,6 @@ passport.deserializeUser((id, done) => {
     });
 });
 
-// Configure Google OAuth Strategy
 passport.use(
     new GoogleStrategy(
         {
@@ -35,25 +32,22 @@ passport.use(
         (token, tokenSecret, profile, done) => {
             const email = profile.emails[0].value;
             const username = profile.displayName;
-            const firstName = profile.name.givenName; // Google profile's first name
-            const lastName = profile.name.familyName; // Google profile's last name
+            const firstName = profile.name.givenName;
+            const lastName = profile.name.familyName;
 
-            // Check if user exists in the database
             db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
                 if (err) {
                     return done(err);
                 }
 
                 if (!row) {
-                    // User doesn't exist, insert into database
                     db.run(
                         'INSERT INTO users (username, firstName, lastName, email, password, googleId) VALUES (?, ?, ?, ?, ?, ?) ',
-                        [username, firstName, lastName, email, '', profile.id], // Password can remain blank since it's Google login
+                        [username, firstName, lastName, email, '', profile.id],
                         function (err) {
                             if (err) {
                                 return done(err);
                             }
-                            // Pass the newly created user to the callback
                             const newUser = {
                                 id: this.lastID,
                                 username,
@@ -66,7 +60,6 @@ passport.use(
                         }
                     );
                 } else {
-                    // User exists, pass the user to the callback
                     return done(null, row);
                 }
             });
