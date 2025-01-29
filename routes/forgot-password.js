@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const { check, validationResult } = require('express-validator'); // For validation
 
+function generateToken() {
+    return crypto.randomBytes(32).toString('hex'); // Generates a 64-character token
+}
 // Forgot password page
 router.get('/', (req, res) => {
     res.render('Auth/forgot-password', { error: null });
