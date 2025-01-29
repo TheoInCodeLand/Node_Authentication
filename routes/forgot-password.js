@@ -30,7 +30,7 @@ router.post('/forgot-password', [
     // sendPasswordResetEmail(email, resetToken);
 
     // In this example, we're simply redirecting to the reset password page with the token
-    res.redirect(`/auth/reset-password/${resetToken}`);
+    res.redirect(`/reset-password/${resetToken}`);
 });
 
 // Reset password page
