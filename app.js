@@ -17,14 +17,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Middleware to parse the request body
 app.use(express.urlencoded({ extended: true }));
 
-// Initialize session middleware
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || 'default_secret', // Fallback for missing environment variable
-        resave: false,
-        saveUninitialized: true,
-    })
-);
+app.use(session({
+    secret: 'your_secret_key', // Replace with a strong secret key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24-hour session
+}));
+
+function isAuthenticated(req, res, next) {
+    if (req.session.user) {
+        return next(); // User is logged in, proceed
+    }
+    res.redirect('/auth/sign-in'); // Redirect to login if not authenticated
+}
 
 // Initialize Passport
 app.use(passport.initialize());
@@ -36,12 +41,9 @@ app.use('/auth', authRoutes);
 
 const forgotPasswordRoutes = require('./routes/forgot-password');
 app.use('/forgot-password', forgotPasswordRoutes);
-app.get('/', (req, res) => {
-    if (req.isAuthenticated()) {
+
+app.get('/', isAuthenticated, (req, res) => {
         res.render('index');
-    } else {
-        res.redirect('/auth/sign-in'); // Corrected path to match your routes
-    }
 });
 
 app.use((req, res) => {
