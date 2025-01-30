@@ -27,7 +27,6 @@ async function sendResetEmail(email, token) {
     } catch (error) {
         console.error("Error sending email:", error);
     }
-    
 }
 
 module.exports = sendResetEmail;

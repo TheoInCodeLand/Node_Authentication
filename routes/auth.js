@@ -1,4 +1,5 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const path = require('path');
@@ -6,6 +7,7 @@ const sqlite3 = require('sqlite3');
 const session = require('express-session'); // Required for session management
 const { body, validationResult } = require('express-validator');
 const otpGenerator = require('otp-generator');
+require('dotenv').config();
 
 const router = express.Router();
 const db = new sqlite3.Database('./database/Auth.db');
@@ -24,6 +26,14 @@ function isAuthenticated(req, res, next) {
     }
     res.redirect('/auth/sign-in'); // Redirect to login if not authenticated
 }
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 // Google OAuth Login
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -154,49 +164,91 @@ router.get('/logout', (req, res) => {
 
 // Registration Route with Validation
 router.post(
-  '/register',
-  [
-    body('fname').notEmpty().withMessage('First name is required'),
-    body('lname').notEmpty().withMessage('Last name is required'),
-    body('email').isEmail().withMessage('Enter a valid email'),
-    body('uname').notEmpty().withMessage('Username is required'),
-    body('password')
-      .isLength({ min: 6 })
-      .withMessage('Password must be at least 6 characters long'),
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.render('Auth/register', { error: errors.array()[0].msg });
+    '/register',
+    [
+        body('fname').notEmpty().withMessage('First name is required'),
+        body('lname').notEmpty().withMessage('Last name is required'),
+        body('email').isEmail().withMessage('Enter a valid email'),
+        body('uname').notEmpty().withMessage('Username is required'),
+        body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+    ],
+    (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render('Auth/register', { error: errors.array()[0].msg });
+        }
+
+        const { fname, lname, email, uname, password } = req.body;
+
+        // Check if email or username already exists
+        db.get(`SELECT * FROM users WHERE email = ? OR username = ?`, [email, uname], async (err, user) => {
+            if (user) {
+                return res.render('Auth/register', { error: 'Email or username already exists!' });
+            }
+
+            const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false });
+            const expiresAt = Date.now() + 5 * 60 * 1000; // OTP expires in 5 minutes
+
+            req.session.tempUser = { fname, lname, email, uname, password, otp, expiresAt };
+
+            const mailOptions = {
+                from: 'thobejanetheo@gmail.com',
+                to: email,
+                subject: 'Verify Your Email - OTP Code',
+                text: `Your OTP code is: ${otp} to complete your TheoInCodeLand account registration request. Code valid for 5 minutes.`
+            };
+            console.log('Verification email sent.')
+            transporter.sendMail(mailOptions, (error) => {
+                if (error) {
+                    return res.render('Auth/register', { error: 'Error sending OTP. Please try again.' });
+                }
+                res.redirect('/auth/verify-email'); // Redirect to OTP verification page
+            });
+        });
+    }
+);
+
+
+// Step 2: Render OTP Verification Page
+router.get('/verify-email', (req, res) => {
+    if (!req.session.tempUser) {
+        return res.redirect('/auth/sign-up');
+    }
+    res.render('Auth/OTP', { error: null });
+});
+
+// Step 3: Verify OTP and Save User in Database
+router.post('/verify-email', async (req, res) => {
+    const { otp } = req.body;
+
+    if (!req.session.tempUser) {
+        return res.render('Auth/OTP', { error: 'Session expired. Please register again.' });
     }
 
-    const { fname, lname, email, uname, password } = req.body;
+    const { fname, lname, email, uname, password, otp: storedOtp, expiresAt } = req.session.tempUser;
 
-    bcrypt.hash(password, 10, (err, hashedPassword) => {
-      if (err) {
-        console.error(err.message);
-        return res.render('Auth/register', { error: 'Something went wrong. Please try again.' });
-      }
+    if (Date.now() > expiresAt) {
+        return res.render('Auth/OTP', { error: 'OTP expired. Please register again.' });
+    }
+    if (otp !== storedOtp) {
+        return res.render('Auth/OTP', { error: 'Invalid OTP. Try again.' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-      db.run(
-        `
-        INSERT INTO users (username, firstName, lastName, email, password, googleId, createdAt)
-        VALUES (?, ?, ?, ?, ?, '0000000', ?)
-        `,
+    db.run(
+        `INSERT INTO users (username, firstName, lastName, email, password, googleId, createdAt)
+        VALUES (?, ?, ?, ?, ?, '0000000', ?)`,
         [uname, fname, lname, email, hashedPassword, new Date().toISOString()],
         (err) => {
-          if (err) {
-            console.error(err.message);
-            if (err.message.includes('UNIQUE')) {
-              return res.render('Auth/register', { error: 'Username or email already exists!' });
+            if (err) {
+                return res.render('Auth/OTP', { error: 'Error saving user. Please try again.' });
             }
-            return res.render('Auth/register', { error: 'Something went wrong. Please try again.' });
-          }
-          res.redirect('/auth/sign-in');
+
+            delete req.session.tempUser;
+            res.redirect('/auth/sign-in');
         }
-      );
-    });
-  }
-);
+    );
+});
+
 
 module.exports = router;

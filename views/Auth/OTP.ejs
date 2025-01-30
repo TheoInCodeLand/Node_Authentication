@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheoInCodeLand | verify-email</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/login.css">
+
+    <!-- --------- UNICONS ---------- -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
+    <!-- --------- FONT AWESOME ---------- -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" 
+    integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- --------- FAVICON ---------- -->
+    <link rel="shortcut icon" href="../assets/img/logo_3.png" type="image/x-icon">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="__logo">
+            <img src='../assets/img/logo_2.png' alt="">
+        </div>
+
+        <h2>Verify Your Email</h2>
+
+        <% if (error) { %>
+            <small style="color: rgba(255, 0, 0, 0.547);"><%= error %></small>
+        <% } %>
+
+        <form class="form" action="/auth/verify-email" method="POST">
+            <div class="flex-column">
+                <label>Username </label>
+            </div>
+            <div class="inputForm">
+                <input 
+                    type="text" 
+                    class="input" 
+                    name="otp" 
+                    id="otp" 
+                    required 
+                    placeholder="Enter the code you received"
+                />
+            </div>
+            <button class="button-submit" type="submit" id="signupBtn">Verify</button>
+        </form>
+
+        <p>Didn’t receive the code? <a href="/auth/sign-up">Register again</a></p>
+    </div>
+</body>
+</html>
