@@ -5,6 +5,7 @@ const path = require('path');
 const sqlite3 = require('sqlite3');
 const session = require('express-session'); // Required for session management
 const { body, validationResult } = require('express-validator');
+const otpGenerator = require('otp-generator');
 
 const router = express.Router();
 const db = new sqlite3.Database('./database/Auth.db');
