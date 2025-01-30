@@ -61,7 +61,6 @@ router.post('/login', (req, res) => {
     if (!email || !password) {
         return res.render('Auth/login', { error: 'All fields are required!' });
     }
-
     // Check if user is locked out
     if (loginAttempts.has(email)) {
         const { attempts, lockedUntil } = loginAttempts.get(email);
@@ -72,7 +71,6 @@ router.post('/login', (req, res) => {
             });
         }
     }
-
     // Fetch user from the database
     db.get(
         `SELECT * FROM users WHERE email = ? OR username = ?`,
@@ -93,12 +91,19 @@ router.post('/login', (req, res) => {
                 console.log('Login failed: Incorrect password');
                 return handleFailedAttempt(email, res);
             }
-
             // Successful login - reset attempts
             loginAttempts.delete(email);
-            
             // Store user session
-            req.session.user = { id: user.id, username: user.username, email: user.email };
+            req.session.user = {
+                id: user.id,
+                name: user.firstName,
+                surname: user.lastName,
+                username: user.username,
+                email: user.email,
+                phone: user.phone || null,
+                address: user.address || null
+            };
+
             console.log(`Login successful: User ID - ${user.id}, Username - ${user.username}`);
 
             res.redirect('/');
