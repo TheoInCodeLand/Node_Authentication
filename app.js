@@ -47,7 +47,12 @@ app.get('/', isAuthenticated, (req, res) => {
 });
 
 app.use((req, res) => {
-    res.status(404).render('404', { message: 'Page not found' }); // Ensure you have a 404.ejs file in your views
+    res.status(404).render('404', { error:'404', message: 'Page not found' }); // Ensure you have a 404.ejs file in your views
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack); // Log the error stack trace for debugging
+    res.status(500).render('404', { error:'505', message: 'Something went wrong!' }); // Ensure you have an error.ejs file in your views
 });
 
 // Start the server
