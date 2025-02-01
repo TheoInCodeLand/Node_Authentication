@@ -27,7 +27,6 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            // callbackURL: "https://node-authentication-q79o.onrender.com/auth/google/callback",
             callbackURL: "https://node-authentication-fx4o.onrender.com/auth/google/callback",
             
         },
