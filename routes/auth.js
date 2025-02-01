@@ -17,7 +17,7 @@ router.use(session({
     secret: 'your_secret_key', // Replace with a strong secret key
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24-hour session
+    cookie: { secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 } // 24-hour session
 }));
 
 function isAuthenticated(req, res, next) {
@@ -187,7 +187,7 @@ router.post(
             }
 
             const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false });
-            const expiresAt = Date.now() + 5 * 60 * 1000; // OTP expires in 5 minutes
+            const expiresAt = Date.now() + 3 * 60 * 1000; // OTP expires in 3 minutes
 
             req.session.tempUser = { fname, lname, email, uname, password, otp, expiresAt };
 
