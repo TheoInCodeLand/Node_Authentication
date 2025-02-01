@@ -43,7 +43,7 @@ router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/auth/sign-in' }),
     (req, res) => {
         req.session.user = req.user; // Store user in session
-        res.redirect('/dashboard');
+        res.redirect('/');
     }
 );
 
@@ -208,7 +208,6 @@ router.post(
     }
 );
 
-
 // Step 2: Render OTP Verification Page
 router.get('/verify-email', (req, res) => {
     if (!req.session.tempUser) {
@@ -249,6 +248,5 @@ router.post('/verify-email', async (req, res) => {
         }
     );
 });
-
 
 module.exports = router;
