@@ -11,6 +11,8 @@ const transporter = nodemailer.createTransport({
 
 async function sendResetEmail(email, token) {
     const resetLink = `http://localhost:3000/forgot-password/reset-password/${token}`;
+    const resetLink1 = `https://node-authentication-fx4o.onrender.com/forgot-password/reset-password/${token}`;
+    // 
 
     let mailOptions = {
         from: '"TheoInCodeLand | Auth" <' + process.env.EMAIL_USER + '>',
@@ -18,7 +20,13 @@ async function sendResetEmail(email, token) {
         subject: "Password Reset Request",
         html: `<p>You requested a password reset. Click below:</p>
                <a href="${resetLink}">${resetLink}</a>
-               <p>The link will expire in an Hour, gnore if you didn’t request this.</p>`,
+               <br>
+               <p>Deployment link!</p>
+               <a href="${resetLink1}">${resetLink1}</a>
+               <p>The link will expire in an Hour, gnore if you didn’t request this.</p>
+               <br>
+               <p>Best regards, TheoInCodeLand</p>
+               `,
     };
 
     try {
