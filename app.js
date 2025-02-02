@@ -42,7 +42,7 @@ app.use('/auth', authRoutes);
 const forgotPasswordRoutes = require('./routes/forgot-password');
 app.use('/forgot-password', forgotPasswordRoutes);
 
-app.get('/', isAuthenticated, (req, res) => {
+app.get('/', (req, res) => {
         res.render('index');
 });
 
