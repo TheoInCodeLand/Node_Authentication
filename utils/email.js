@@ -32,6 +32,7 @@ async function sendResetEmail(email, token) {
     try {
         await transporter.sendMail(mailOptions);
         console.log(`Password reset email sent to: ${resetLink}`, email );
+        console.log(`Password reset email sent to: ${resetLink1}`, email );
     } catch (error) {
         console.error("Error sending email:", error);
     }
